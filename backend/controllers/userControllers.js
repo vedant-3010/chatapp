@@ -55,4 +55,18 @@ const authUser = asynchandler(async (req, res) => {
     throw new Error("invaild email or password.");
   }
 });
-module.exports = { registerUser, authUser };
+
+const allUsers = asynchandler(async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const users = await User.find(keyword);
+  res.send(users);
+});
+module.exports = { registerUser, authUser, allUsers };
