@@ -56,6 +56,7 @@ const authUser = asynchandler(async (req, res) => {
   }
 });
 
+// /api/user?search=vedant
 const allUsers = asynchandler(async (req, res) => {
   const keyword = req.query.search
     ? {
@@ -66,7 +67,8 @@ const allUsers = asynchandler(async (req, res) => {
       }
     : {};
 
-  const users = await User.find(keyword);
+  const users = await (
+    await User.find(keyword)).find({ _id: { $ne: req.user._id } });
   res.send(users);
 });
 module.exports = { registerUser, authUser, allUsers };
